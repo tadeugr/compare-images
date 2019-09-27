@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import pandas as pd
 import numpy as np
 import keras
@@ -13,6 +14,7 @@ from keras.layers import Activation, Dropout
 from keras.models import Model
 from keras.models import Sequential
 import tensorflow as tf
+from scipy import spatial
 
 # pip install "numpy<1.17"
 
@@ -27,6 +29,10 @@ def get_feature_vector(img):
 def calculate_similarity(vector1, vector2):
     return 1 - spatial.distance.cosine(vector1, vector2)
 
+def read_image(filename):
+    oriimg = cv2.imread(filename)
+    return oriimg
+
 def main():
     img1 = read_image("./img1.jpg")
     img2 = read_image("./img2.jpg")
@@ -34,8 +40,8 @@ def main():
     f1 = get_feature_vector(img1)
     f2 = get_feature_vector(img2)
     f3 = get_feature_vector(img3)
-    print(calculate_feature_vectors_dist(f1, f2)) # 0.7384121417999268
-    print(calculate_feature_vectors_dist(f1, f3)) # 0.48573723435401917
+    print(calculate_similarity(f1, f2)) # 0.7384121417999268
+    print(calculate_similarity(f1, f3)) # 0.48573723435401917
 
 
 

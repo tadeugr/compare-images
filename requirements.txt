@@ -1,7 +1,6 @@
 pandas
-numpy
+numpy<1.17
 keras
-matplotlib
 matplotlib
 h5py
 tensorflow
