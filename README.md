@@ -61,6 +61,8 @@ The values that fall under the similar field will represent a "score" based on h
 
 Python `virtualenv` is highly recommended.
 
+Checkout/download the source code and go to its directory.
+
 ## MacOS
 
 Install dependencies:
@@ -75,7 +77,7 @@ Install requirements:
 pip3 install -r requirements.txt
 ```
 
-Run the example:
+Run the example *(from project's root folder)*:
 
 ```
 python3 compare-images.py tests/input.csv output.csv
@@ -93,7 +95,7 @@ Install requirements:
 pip install -r requirements.txt
 ```
 
-Run the example:
+Run the example *(from project's root folder)*:
 
 ```
 python compare-images.py tests\input.csv output.csv
@@ -116,7 +118,7 @@ Install requirements:
 pip3 install -r requirements.txt
 ```
 
-Run the example:
+Run the example *(from project's root folder)*:
 
 ```
 python3 compare-images.py tests/input.csv output.csv
@@ -129,3 +131,5 @@ Command usage:
 ```
 python compare-images.py <INPUT CSV PATH> <OUTPUT CSV PATH>
 ```
+
+Note that you can run the command with CSVs absolute paths. Also, if your input CSV file has image's absolute paths, it is not mandatory to in the project's root folder to run the script.
