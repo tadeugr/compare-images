@@ -14,9 +14,11 @@ That being said, this project prioritizes accuracy with a fairness tradeoff for 
 
 * The similarity score is a range from 0 (zero) to 1 (one). Zero being "identical" and One being "completely different". **Note that similarity scores under 30% are being considered "completely different".**
 
+* When you run the script for the first time, it will download the VGG16 model (about 500M). It might take a while, although it will happen only once.
+
 * Supported files: JPEG, PNG and GIF.
 
-* GIF files are converted to PNG RBG format.
+* GIF files will be converted to PNG RBG format.
 
 * Transparency on PNG files will be neglected.
 
@@ -25,25 +27,6 @@ That being said, this project prioritizes accuracy with a fairness tradeoff for 
 * Libpng 1.6+ is more stringent about checking ICC profiles than previous versions. If your system has Libpng 1.6+ installed, you might see some messages like `libpng warning: iCCP: CRC error`. You can ignore those messages. They will not affect the analysis.
 
 * All images in the tests folder are under GNU license.
-
-
-
-virtualenv is recommended
-
-libpng warning: iCCP: CRC error
-mogrify *.png
-convert in.png out.png
-
-Note for GIF
-
-
-
-CSV delimiter must ;
-
-apt install -y python3 python3-pip libsm6 libxext6 libxrender-dev imagemagick
-
-https://www.imgonline.com.ua/eng/similarity-percent.php
-https://deepai.org/machine-learning-model/image-similarity
 
 # Input file
 
@@ -55,6 +38,8 @@ The CSV will contain 2 fields (image1 and image2) with N records. Each field con
 | ab.png |  bb.png |
 | ac.png |  ac.gif |
 | ad.png |  bd.png |
+
+**The CSV delimiter must be ; (semicolon)**
 
 # Output file
 
@@ -72,8 +57,40 @@ The values that fall under the similar field will need to represent a "score" ba
 | ad.png |  bd.png | 1       | 2.32     |
 
 
-# Validation metodolgy
+# How to build this project
 
-neural network
-external tools https://www.imgonline.com.ua/eng/similarity-percent-result.php
-visual analysis 
+## Requirements
+
+* Python3 and Pip3
+
+Python `virtualenv` is highly recommended.
+
+## Build
+
+Checkout the source code, go to its folder and run:
+
+```
+pip install -r requirements.txt 
+```
+
+# How to run this project
+
+Command usage:
+
+```
+python compare-images.py <INPUT CSV PATH> <OUTPUT CSV PATH>
+```
+
+Example:
+
+```
+python compare-images.py my-dataset.csv report.csv
+```
+
+# How to run the tests as an example
+
+```
+python compare-images.py tests\input.csv output.csv
+```
+
+You will be able to find the results in the `output.csv`.
