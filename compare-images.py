@@ -84,12 +84,12 @@ def gifToPng(infile):
         sys.exit(1)
     
     i = 0
-    mypalette = im.getpalette()
+    myPalette = im.getpalette()
     prefix = 'auto-converted-gif2png-%s-' % str(uuid.uuid1())
     pngFileNames = []
     try:
         while 1:
-            im.putpalette(mypalette)
+            im.putpalette(myPalette)
             new_im = Image.new("RGBA", im.size)
             new_im.paste(im)
 
