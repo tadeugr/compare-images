@@ -5,3 +5,5 @@ matplotlib
 h5py
 tensorflow
 opencv-python
+csv
+pillow
