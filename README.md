@@ -14,7 +14,7 @@ That being said, this project prioritizes accuracy with a fairness tradeoff for 
 
 * The similarity score is a range from 0 (zero) to 1 (one). Zero being "identical" and One being "completely different". **Note that similarity scores under 30% are being considered "completely different".**
 
-* When you run the script for the first time, it will download the VGG16 model (about 500M). It might take a while, although it will happen only once.
+* When you run the script for the first time, it will download the VGG16 model (about 500M). It might take a while, although it will happen only once. You will see the following message `Downloading data from https://github.com/fchollet/deep-learning-models/releases/download/v0.1/vgg16_weights_tf_dim_ordering_tf_kernels.h5`
 
 * Supported files: JPEG, PNG and GIF.
 
@@ -64,6 +64,14 @@ The values that fall under the similar field will need to represent a "score" ba
 * Python3 and Pip3
 
 Python `virtualenv` is highly recommended.
+
+*python and pip aliases must point to python3 and pip3*.
+
+Ubuntu linux users must install the following dependencies:
+
+```
+apt install -y libsm6 libxext6 libxrender-dev
+```
 
 ## Build
 
