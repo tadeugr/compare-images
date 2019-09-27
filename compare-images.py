@@ -2,9 +2,9 @@
 
 import sys
 import os
+import glob
 import pandas as pd
 import numpy as np
-import keras
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import h5py
@@ -17,6 +17,7 @@ import time
 
 stderr = sys.stderr
 sys.stderr = open(os.devnull, 'w')
+import keras
 from keras.layers import Flatten, Dense, Input,concatenate
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Activation, Dropout
@@ -84,7 +85,7 @@ def gifToPng(infile):
     
     i = 0
     mypalette = im.getpalette()
-    prefix = 'auto-gif2png-%s-' % str(uuid.uuid1())
+    prefix = 'auto-converted-gif2png-%s-' % str(uuid.uuid1())
     pngFileNames = []
     try:
         while 1:
@@ -145,23 +146,48 @@ def getConvertMap(imgPath):
     except KeyError:
         return imgPath
 
+def saveFile(path, content):
+    try:
+        f = open(path, 'w' )
+        f.write(content)
+        f.close()
+    except Exception as e:
+        logger.error('ERROR: '+ str(e))
+        traceback.print_exc()
+
+def cleanUp():
+    try:
+        fileList = glob.glob('auto-converted-*', recursive=True)
+        for filePath in fileList:
+                os.remove(filePath)
+    except Exception as e:
+        logger.error('ERROR: '+ str(e))
+        traceback.print_exc()
+
+
 def main():
     try:
-        with open('tests/input.csv') as csvfile:
+        
+        if not sys.argv[1]:
+            raise Exception('CSV input path not defined')
+
+        csvInputPath = sys.argv[1]
+
+        with open(csvInputPath) as csvfile:
             inputCsv = csv.reader(csvfile, delimiter=';')
-            outputCsv = ""
+            outputCsv = "image1;image2;similar;elapsed\n"
             next(inputCsv, None)
             for row in inputCsv:
-                img1Path = row[0]
-                img2Path = row[1]
+                img1PathOriginal = row[0]
+                img2PathOriginal = row[1]
 
-                formatFiles((img1Path, img2Path))
-                # Overwrite paths if image was converted
+                formatFiles((img1PathOriginal, img2PathOriginal))
+                # Get paths if image was converted
                 # In this case, use the temporary file name
-                img1Path = getConvertMap(img1Path)
-                img2Path = getConvertMap(img2Path)
+                img1Path = getConvertMap(img1PathOriginal)
+                img2Path = getConvertMap(img2PathOriginal)
 
-                logger.info('Comparing %s x %s', img1Path, img2Path)
+                logger.info('Comparing %s x %s', img1PathOriginal, img2PathOriginal)
 
                 startTime = time.time()
                 similarity = calculateSimilarity(img1Path, img2Path)
@@ -170,11 +196,14 @@ def main():
                 deltaTime = formatNumber2d(endTime - startTime)
                 logger.info('Time elapsed (seconds): %s', str(deltaTime))
 
-                outputCsv += ("%s;%s;" % (img1Path, img2Path))
+                outputCsv += ("%s;%s;" % (img1PathOriginal, img2PathOriginal))
                 outputCsv += ("%s;%s\n" % (score, deltaTime))
                 print(outputCsv)
+
                 #break
         print(outputCsv)
+        cleanUp()
+
     except Exception as e:
         logger.error('ERROR: '+ str(e))
         traceback.print_exc()
