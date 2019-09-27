@@ -4,12 +4,13 @@ libpng warning: iCCP: CRC error
 mogrify *.png
 convert in.png out.png
 
+Note for GIF: 
 
 This project prioritizes accuracy, the trade-off is more resources usage
 Images used in the test case are under GNU license (unsplash.com)
 Loads a color image. Any transparency of image will be neglected
 Ideally 224x224
-JPEG
+
 CSV delimiter must ;
 
 apt install -y python3 python3-pip libsm6 libxext6 libxrender-dev imagemagick
@@ -29,4 +30,4 @@ visual analysis
 
 # Future versions
 
-Scale images proportionally
+Multithread
