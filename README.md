@@ -101,7 +101,7 @@ Run the example *(from project's root folder)*:
 python compare-images.py tests\input.csv output.csv
 ```
 
-# Ubuntu Linux
+## Ubuntu Linux
 
 *It also works on Docker containers*
 
