@@ -99,7 +99,9 @@ Run the example:
 python compare-images.py tests\input.csv output.csv
 ```
 
-# Ubuntu Linux (it also works on Docker containers)
+# Ubuntu Linux
+
+*It also works on Docker containers*
 
 Install dependencies:
 
