@@ -13,6 +13,7 @@ import csv
 import uuid
 import logging
 import traceback
+import time
 
 stderr = sys.stderr
 sys.stderr = open(os.devnull, 'w')
@@ -26,6 +27,7 @@ sys.stderr = stderr
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 from scipy import spatial
 from PIL import Image
 import imghdr
@@ -41,17 +43,36 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 convertMap = {}
 
-def get_feature_vector(img):
+def getFeatureVector(img):
     img1 = cv2.resize(img, (224, 224))
     feature_vector = basemodel.predict(img1.reshape(1, 224, 224, 3))
     return feature_vector
 
-def calculate_similarity(vector1, vector2):
+def calculateCosineDistance(vector1, vector2):
     return 1 - spatial.distance.cosine(vector1, vector2)
 
-def read_image(filename):
-    oriimg = cv2.imread(filename)
-    return oriimg
+def calculateSimilarity(img1Path, img2Path):
+    img1 = readImage(img1Path)
+    img2 = readImage(img2Path)
+    f1 = getFeatureVector(img1)
+    f2 = getFeatureVector(img2)
+    return calculateCosineDistance(f1, f2)
+
+def formatNumber2d(number):
+    return float("{:.2f}".format(number))
+
+def formatNumberTrailingZero(number):
+    return float("{0:g}".format(number))
+
+def getScore(originalScore):
+    score = 1 - originalScore
+    score = "{:.2f}".format(score)
+    score = "{0:g}".format(float(score))
+    return score
+
+def readImage(filename):
+    img = cv2.imread(filename)
+    return img
 
 def gifToPng(infile):
     # Open GIF file
@@ -126,42 +147,11 @@ def getConvertMap(imgPath):
 
 def main():
     try:
-        '''
-        #processImage("tests/img/img-003.gif")
-        print(isFileTypeSupported('tests/img/img-003.gif'))
-
-        sys.exit()
-        '''
-
-        '''
-        img1 = read_image("tests/img/img-001.jpeg")
-        img2 = read_image("tests/img/img-001.jpeg")
-        #img3 = read_image("tests/img/img-003.gif")
-        img3 = read_image("foo0.png")
-        f1 = get_feature_vector(img1)
-        f2 = get_feature_vector(img2)
-        f3 = get_feature_vector(img3)
-        print(calculate_similarity(f1, f2))
-        print(calculate_similarity(f1, f3))
-        sys.exit()
-        '''
-    
-
-        '''
-        for i in range(1,10):
-            img1 = read_image("tests/img/img-00"+str(i)+".jpeg")
-            f1 = get_feature_vector(img1)
-            for j in range(1,10):
-                img2 = read_image("tests/img/img-00"+str(j)+".jpeg")
-                f2 = get_feature_vector(img2)
-                print("tests/img/img-00"+str(i)+".jpeg"+" "+"tests/img/img-00"+str(j)+".jpeg")
-                print(calculate_similarity(f1, f2))
-        '''
-
         with open('tests/input.csv') as csvfile:
-            readCSV = csv.reader(csvfile, delimiter=';')
-            next(readCSV, None)
-            for row in readCSV:
+            inputCsv = csv.reader(csvfile, delimiter=';')
+            outputCsv = ""
+            next(inputCsv, None)
+            for row in inputCsv:
                 img1Path = row[0]
                 img2Path = row[1]
 
@@ -172,17 +162,22 @@ def main():
                 img2Path = getConvertMap(img2Path)
 
                 logger.info('Comparing %s x %s', img1Path, img2Path)
-               
-                img1 = read_image(img1Path)
-                img2 = read_image(img2Path)
-                f1 = get_feature_vector(img1)
-                f2 = get_feature_vector(img2)
-                print(img1Path+" "+img2Path)
-                print(calculate_similarity(f1, f2))
+
+                startTime = time.time()
+                similarity = calculateSimilarity(img1Path, img2Path)
+                score = getScore(similarity)
+                endTime = time.time()
+                deltaTime = formatNumber2d(endTime - startTime)
+                logger.info('Time elapsed (seconds): %s', str(deltaTime))
+
+                outputCsv += ("%s;%s;" % (img1Path, img2Path))
+                outputCsv += ("%s;%s\n" % (score, deltaTime))
+                print(outputCsv)
+                #break
+        print(outputCsv)
     except Exception as e:
         logger.error('ERROR: '+ str(e))
         traceback.print_exc()
-
 
 if __name__ == "__main__":
     main()
